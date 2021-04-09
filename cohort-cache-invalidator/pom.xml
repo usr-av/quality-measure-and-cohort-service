@@ -1,0 +1,79 @@
+<!--  ************************************** -->
+<!--  (C) Copyright IBM Corp. 2021, 2021     -->
+<!--  SPDX-License-Identifier: Apache-2.0    -->
+<!--  ************************************** -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.ibm.cohort</groupId>
+		<artifactId>cohort-parent</artifactId>
+		<version>${revision}</version>
+		<relativePath>../cohort-parent</relativePath>
+	</parent>
+
+	<artifactId>cohort-cache-invalidator</artifactId>
+	<packaging>jar</packaging>
+
+	<scm>
+		<url>https://github.com/Alvearie/quality-measure-and-cohort-service</url>
+		<connection>scm:git:git@github.com:Alvearie/quality-measure-and-cohort-service.git</connection>
+		<developerConnection>scm:git:git@github.com:Alvearie/quality-measure-and-cohort-service.git</developerConnection>
+	</scm>
+
+	<dependencies>
+		<!-- Compile dependencies -->
+		<dependency>
+			<groupId>com.ibm.cohort</groupId>
+			<artifactId>fhir-client-config</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi.fhir</groupId>
+			<artifactId>hapi-fhir-base</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi.fhir</groupId>
+			<artifactId>org.hl7.fhir.r4</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+		<!-- TODO: Remove these once dan's cos stuff is merged -->
+		<dependency>
+			<groupId>com.ibm.cos</groupId>
+			<artifactId>ibm-cos-java-sdk-core</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.cos</groupId>
+			<artifactId>ibm-cos-java-sdk-s3</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+
+		<!-- Runtime dependencies -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+</project>
+
