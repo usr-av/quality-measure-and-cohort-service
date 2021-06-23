@@ -34,7 +34,6 @@ import org.cqframework.cql.elm.execution.Library;
 import org.fhir.ucum.UcumService;
 import org.hl7.elm_modelinfo.r1.ModelInfo;
 import org.opencds.cqf.cql.engine.elm.execution.ObjectFactoryEx;
-import org.opencds.cqf.cql.engine.execution.CqlLibraryReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
