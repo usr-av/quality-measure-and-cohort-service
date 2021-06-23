@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXB;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.cqframework.cql.cql2elm.CqlTranslator;
 import org.cqframework.cql.cql2elm.CqlTranslator.Options;
@@ -29,11 +33,13 @@ import org.cqframework.cql.cql2elm.ModelManager;
 import org.cqframework.cql.elm.execution.Library;
 import org.fhir.ucum.UcumService;
 import org.hl7.elm_modelinfo.r1.ModelInfo;
+import org.opencds.cqf.cql.engine.elm.execution.ObjectFactoryEx;
 import org.opencds.cqf.cql.engine.execution.CqlLibraryReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ibm.cohort.engine.LibraryFormat;
+import zom.ibm.cohort.engine.FrankensteinObjectFactory;
 
 /**
  * Uses the CqlTranslator inprocess to convert CQL to ELM. 
@@ -93,7 +99,8 @@ public class InJVMCqlTranslationProvider extends BaseCqlTranslationProvider {
 
 		switch (targetFormat) {
 		case XML:
-			result = CqlLibraryReader.read(new StringReader(translator.toXml()));
+			result = gnarlyConvert(translator.toXml());
+//			result = CqlLibraryReader.read(new StringReader(translator.toXml()));
 			break;
 // This is only a theoretical nice-to-have and fails deserialization, so disabling support for now.
 //		case JSON:
@@ -106,6 +113,14 @@ public class InJVMCqlTranslationProvider extends BaseCqlTranslationProvider {
 
 		return result;
 	}
+
+	private Library gnarlyConvert(String elmString) throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(ObjectFactoryEx.class, FrankensteinObjectFactory.class);
+		Unmarshaller u = context.createUnmarshaller();
+		Object result = u.unmarshal(new StringReader(elmString));
+		return ((JAXBElement<Library>)result).getValue();
+	}
+
 	
 	@Override
 	public void registerModelInfo(ModelInfo modelInfo) {
