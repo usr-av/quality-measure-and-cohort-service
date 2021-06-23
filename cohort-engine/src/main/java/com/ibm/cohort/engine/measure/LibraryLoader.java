@@ -15,7 +15,6 @@ import org.cqframework.cql.elm.execution.Library;
 import org.cqframework.cql.elm.execution.VersionedIdentifier;
 import org.hl7.fhir.r4.model.Attachment;
 import org.opencds.cqf.common.providers.LibraryResolutionProvider;
-import org.opencds.cqf.cql.engine.execution.CqlLibraryReader;
 
 import com.ibm.cohort.engine.translation.CqlTranslationProvider;
 
@@ -75,14 +74,15 @@ public class LibraryLoader implements org.opencds.cqf.cql.engine.execution.Libra
 		}
 
 		Attachment attachment = mimeTypeIndex.get("application/elm+xml");
-		if (attachment != null) {
-			try {
-				elmLibrary = CqlLibraryReader.read(getAttachmentData(attachment));
-			} catch (Exception ex) {
-				throw new IllegalArgumentException(String.format("Library %s-%s elm attachment failed to deserialize",
-						libraryIdentifier.getId(), libraryIdentifier.getVersion()), ex);
-			}
-		}
+		// Commenting out to force CQL translation for experiment purposes.
+//		if (attachment != null) {
+//			try {
+//				elmLibrary = CqlLibraryReader.read(getAttachmentData(attachment));
+//			} catch (Exception ex) {
+//				throw new IllegalArgumentException(String.format("Library %s-%s elm attachment failed to deserialize",
+//						libraryIdentifier.getId(), libraryIdentifier.getVersion()), ex);
+//			}
+//		}
 
 		if (elmLibrary == null) {
 			attachment = mimeTypeIndex.get("text/cql");
