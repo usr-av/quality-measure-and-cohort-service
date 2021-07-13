@@ -11,7 +11,9 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXB;
@@ -31,6 +33,10 @@ import org.cqframework.cql.cql2elm.ModelInfoLoader;
 import org.cqframework.cql.cql2elm.ModelInfoProvider;
 import org.cqframework.cql.cql2elm.ModelManager;
 import org.cqframework.cql.elm.execution.Library;
+import org.eclipse.persistence.jaxb.JAXBContextProperties;
+import org.eclipse.persistence.sessions.Project;
+import org.eclipse.persistence.sessions.SessionEvent;
+import org.eclipse.persistence.sessions.SessionEventAdapter;
 import org.fhir.ucum.UcumService;
 import org.hl7.elm_modelinfo.r1.ModelInfo;
 import org.opencds.cqf.cql.engine.elm.execution.ObjectFactoryEx;
@@ -38,7 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ibm.cohort.engine.LibraryFormat;
-import zom.ibm.cohort.engine.FrankensteinObjectFactory;
 
 /**
  * Uses the CqlTranslator inprocess to convert CQL to ELM. 
@@ -114,13 +119,49 @@ public class InJVMCqlTranslationProvider extends BaseCqlTranslationProvider {
 	}
 
 	private Library gnarlyConvert(String elmString) throws JAXBException {
-		JAXBContext context = JAXBContext.newInstance(ObjectFactoryEx.class, FrankensteinObjectFactory.class);
+//		JAXBContext context = JAXBContext.newInstance(ObjectFactoryEx.class, FrankensteinObjectFactory.class);
+		System.setProperty("org.eclipse.persistence.moxy.annotation.xml-value-extension", "true");
+		Map<String, Object> properties = new HashMap<>();
+		InputStream is = this.getClass().getResourceAsStream("/override-bindings-registry.xml");
+		properties.put(JAXBContextProperties.OXM_METADATA_SOURCE, is);
+
+//		properties.put(PersistenceUnitProperties.DESCRIPTOR_CUSTOMIZER_, "");
+
+		properties.put(JAXBContextProperties.SESSION_EVENT_LISTENER, new SessionEventAdapter() {
+
+			@Override
+			public void postLogin(SessionEvent event) {
+				Project project = event.getSession().getProject();
+
+				OverridingEvaluators overrider = new OverridingEvaluators();
+				overrider.override(project.getDescriptors());
+
+				super.preLogin(event);
+			}
+
+		});
+
+
+//		properties.clear();
+
+		JAXBContext context = JAXBContext.newInstance(new Class[]{ObjectFactoryEx.class}, properties);
+//		JAXBContext context = JAXBContext.newInstance(new Class[]{CustomObjectFactoryEx2.class}, properties);
+//		JAXBContext context = JAXBContext.newInstance(new Class[]{ObjectFactoryEx.class, ShortOrEvaluator.class});
+//
+//		context = JAXBContext.newInstance(ObjectFactoryEx.class, ShortOrEvaluator.class);
+//		JAXBContext context = JAXBContext.newInstance(ObjectFactoryEx.class, ShortOrEvaluator.class);
+//		JAXBContext context = JAXBContext.newInstance(ObjectFactoryEx.class, FrankensteinObjectFactory.class);
+//		JAXBContext context = JAXBContext.newInstance(ObjectFactoryEx.class, FrankensteinObjectFactory.class);
+//		JAXBContext context = JAXBContext.newInstance(CustomObjectFactorEx.class);
+//		JAXBContext context = JAXBContext.newInstance(ObjectFactoryEx.class, ShortOrAdapter.class, ShortAndAdapter.class);
 		Unmarshaller u = context.createUnmarshaller();
+//		u.setAdapter(new ShortOrAdapter());
+//		u.setAdapter(new ShortAndAdapter());
+//		u.setProperty("com.sun.xml.internal.bind.ObjectFactory", new Object[]{new AAAFrankensteinObjectFactory(), new ObjectFactoryEx()});
 		Object result = u.unmarshal(new StringReader(elmString));
 		return ((JAXBElement<Library>)result).getValue();
 	}
 
-	
 	@Override
 	public void registerModelInfo(ModelInfo modelInfo) {
 		// Force mapping  to FHIR 4.0.1. Consider supporting different versions in the future.

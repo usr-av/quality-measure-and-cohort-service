@@ -1,6 +1,5 @@
-package com.ibm.cohort.engine.translation;
+package org.cqframework.cql.elm.execution;
 
-import org.cqframework.cql.elm.execution.Or;
 import org.opencds.cqf.cql.engine.elm.execution.OrEvaluator;
 import org.opencds.cqf.cql.engine.execution.Context;
 
@@ -12,11 +11,7 @@ import org.opencds.cqf.cql.engine.execution.Context;
 //@XmlRootElement(name = "Or")
 //@XmlJavaTypeAdapter(ShortOrAdapter.class)
 //@XmlType(name="Or", namespace = "urn:hl7-org:elm:r1")
-@OverridingEvaluator
 public class ShortOrEvaluator extends Or {
-
-	public ShortOrEvaluator() {
-	}
 
 	@Override
 	protected Object internalEvaluate(Context context) {

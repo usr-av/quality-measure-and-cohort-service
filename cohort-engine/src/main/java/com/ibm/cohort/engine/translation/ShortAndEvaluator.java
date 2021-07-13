@@ -4,9 +4,14 @@ import org.cqframework.cql.elm.execution.And;
 import org.opencds.cqf.cql.engine.elm.execution.AndEvaluator;
 import org.opencds.cqf.cql.engine.execution.Context;
 
+
+//@XmlRootElement(name = "And")
 public class ShortAndEvaluator extends And {
 
-    @Override
+	public ShortAndEvaluator() {
+	}
+
+	@Override
     protected Object internalEvaluate(Context context) {
         Boolean left = getValue(0, context);
 
