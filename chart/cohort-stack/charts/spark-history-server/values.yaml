@@ -1,0 +1,49 @@
+#
+# (C) Copyright IBM Corp. 2021, 2021
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+enabled: true
+
+replicaCount: 1
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: <helm-repo>
+  tag: <helm-tag>
+  pullsecret: ibmcloud-toolchain-common-services-registry
+  pullPolicy: IfNotPresent
+  name: spark-history-server
+
+service:
+  type: ClusterIP
+  port:
+    number: 18080
+    name: http-historyport
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+
+s3:
+  secret:
+    name: spark-cos-secret
+    accessKeyId: AWS_ACCESS_KEY
+    secretKeyId: AWS_SECRET_KEY
+    endpointId: AWS_ENDPOINT
+  bucket: cohort-spark-history
+  eventsDir: "/"
+
+# annotations:
+#   TOOLCHAIN_ID: null
+#   GIT_URL: null
+#   GIT_BRANCH: null
+#   GIT_COMMIT: null
+#   USER_NAME: null
+#   APPLICATION_VERSION: null

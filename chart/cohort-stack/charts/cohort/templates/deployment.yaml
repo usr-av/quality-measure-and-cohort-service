@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
+{{- if .Values.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,7 +40,7 @@ spec:
             secretName: {{ .Values.internalTlsCertSecretName }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}{{ .Values.image.name }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: ENABLE_DARK_FEATURES
@@ -75,4 +76,4 @@ spec:
             periodSeconds: 10
       nodeSelector:
         worker-type: application
-
+{{- end }}

@@ -8,14 +8,9 @@
 # Should have at least 3 replicas so that they can be spread to different
 # zones and so that during upgrades, k8s can ensure at least 1 replica is running
 # while the others are being upgraded
+enabled: true
+
 replicaCount: 3
-annotations:
-  TOOLCHAIN_ID: null
-  GIT_URL: null
-  GIT_BRANCH: null
-  GIT_COMMIT: null
-  USER_NAME: null
-  APPLICATION_VERSION: null
 
 image:
   repository: <helm-repo>
@@ -25,7 +20,7 @@ image:
   #didn't hardcode it in deployment.yaml, because it caused an error/warning in the toolchain insights console
   pullsecret: ibmcloud-toolchain-common-services-registry
   pullPolicy: IfNotPresent
-  imageName: cohort-app
+  name: cohorting-app
 
 service:
   type: ClusterIP
