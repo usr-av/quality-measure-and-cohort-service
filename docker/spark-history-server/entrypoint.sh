@@ -1,10 +1,10 @@
+#!/bin/bash
+
 #
 # (C) Copyright IBM Corp. 2021, 2021
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-
-#!/bin/bash
 
 export SPARK_HISTORY_OPTS="$SPARK_HISTORY_OPTS \
     -Dspark.history.fs.logDirectory=s3a://$AWS_BUCKET$AWS_LOG_PATH \

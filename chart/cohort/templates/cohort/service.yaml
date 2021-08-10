@@ -3,7 +3,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-{{- if .Values.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -14,13 +13,11 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.cohort.service.type }}
   ports:
-    - port: {{ .Values.service.externalPort }}
-      targetPort: {{ .Values.service.externalPort }}
+    - port: {{ .Values.cohort.service.externalPort }}
+      targetPort: {{ .Values.cohort.service.externalPort }}
       protocol: TCP
-      name: {{ .Values.service.name }}
   selector:
     app: {{ template "name" . }}
     release: {{ .Release.Name }}
-{{- end }}
