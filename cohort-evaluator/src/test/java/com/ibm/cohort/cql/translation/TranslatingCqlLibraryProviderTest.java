@@ -1,3 +1,9 @@
+/*
+ * (C) Copyright IBM Corp. 2021, 2021
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package com.ibm.cohort.cql.translation;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +19,7 @@ import com.ibm.cohort.cql.library.CqlLibrary;
 import com.ibm.cohort.cql.library.CqlLibraryDescriptor;
 import com.ibm.cohort.cql.library.CqlLibraryDescriptor.Format;
 import com.ibm.cohort.cql.library.CqlLibraryProvider;
-import com.ibm.cohort.cql.library.fs.DirectoryBasedCqlLibraryProvider;
+import com.ibm.cohort.cql.library.DirectoryBasedCqlLibraryProvider;
 
 public class TranslatingCqlLibraryProviderTest {
     @Test
