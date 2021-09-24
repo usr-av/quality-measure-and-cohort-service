@@ -19,14 +19,14 @@
 		<developerConnection>scm:git:git@github.com:Alvearie/quality-measure-and-cohort-service.git</developerConnection>
 	</scm>
 
-    <properties>
-        <!-- image.tag>us.icr.io/vpc-dev-cohort-rns/cohort-evaluator-spark:a-p3.4.3-tekton-20210831191041-5b74a7ab8f76f0e3c3f2273f49177128051e4e05</image.tag -->
-        <image.tag>us.icr.io/vpc-dev-cohort-rns/cohort-evaluator-spark:a-p3.4.3-tekton-20210910191400-4f2a530822f62bf0fa178a66ab73cba1dfab8e67</image.tag>
-        <config.volume>cohort-config</config.volume>
-        <data.bucket>kwasny-test</data.bucket>
-        <data.secret>spark-cos-secret</data.secret>
-        <job.name>simple-job</job.name>
-    </properties>
+	<properties>
+		<!-- image.tag>us.icr.io/vpc-dev-cohort-rns/cohort-evaluator-spark:a-p3.4.3-tekton-20210831191041-5b74a7ab8f76f0e3c3f2273f49177128051e4e05</image.tag -->
+		<image.tag>us.icr.io/vpc-dev-cohort-rns/cohort-evaluator-spark:a-p3.4.3-tekton-20210910191400-4f2a530822f62bf0fa178a66ab73cba1dfab8e67</image.tag>
+		<config.volume>cohort-config</config.volume>
+		<data.bucket>kwasny-test</data.bucket>
+		<data.secret>spark-cos-secret</data.secret>
+		<job.name>simple-job</job.name>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -34,52 +34,51 @@
 			<artifactId>cohort-evaluator</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>com.ibm.cohort</groupId>
 			<artifactId>cohort-model-datarow</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>org.opencds.cqf.cql</groupId>
 			<artifactId>engine</artifactId>
 		</dependency>
-		
+	
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 		</dependency>
-		
+	
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
-
+	
 		<!-- This needs to be before Spark because spark pulls in JSP 2.1 and JSP 
 			2.1 has an embedded version of the javax.el API -->
 		<dependency>
 			<groupId>org.glassfish</groupId>
 			<artifactId>javax.el</artifactId>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_${spark.scala.version}</artifactId>
 		</dependency>
-
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-kubernetes_${spark.scala.version}</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        
-
+	
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-kubernetes_${spark.scala.version}</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+	
 		<dependency>
 			<groupId>io.delta</groupId>
 			<artifactId>delta-core_${spark.scala.version}</artifactId>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
@@ -88,29 +87,34 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-bundle</artifactId>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-aws</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
 		</dependency>
-
+	
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+	
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
@@ -183,10 +187,9 @@
 						<argument>--conf</argument>
 						<argument>spark.driver-memory=1g</argument>
 						<argument>--conf</argument>
-						<!-- argument>spark.master=k8s://https://c105.us-east.containers.cloud.ibm.com:32327</argument -->
-						<argument>spark.master=local[4]</argument>
+						<argument>spark.master=k8s://https://c105.us-east.containers.cloud.ibm.com:32327</argument>
 						<argument>--conf</argument>
-                        <argument>spark.eventLog.dir=s3a://${data.bucket}/z-spark-history</argument>
+						<argument>spark.eventLog.dir=s3a://${data.bucket}/z-spark-history</argument>
 						<argument>--conf</argument>
 						<argument>spark.eventLog.enabled=true</argument>
 						<argument>--conf</argument>
@@ -196,7 +199,7 @@
 						<argument>--conf</argument>
 						<argument>spark.kubernetes.namespace=dev</argument>
 						<argument>--conf</argument>
-                        <argument>spark.kubernetes.container.image=${image.tag}</argument>
+						<argument>spark.kubernetes.container.image=${image.tag}</argument>
 						<argument>--conf</argument>
 						<argument>spark.kubernetes.authenticate.driver.serviceAccountName=spark</argument>
 						<argument>--conf</argument>
@@ -241,8 +244,8 @@
 						<argument>spark.kubernetes.driver.service.annotation.prometheus.io/port=4040</argument>
 						
 						
-						<!-- argument>deploy-mode</argument>
-						<argument>cluster</argument -->
+						<argument>deploy-mode</argument>
+						<argument>cluster</argument>
 						<argument>--name</argument>
 						<argument>cohort-evaluator-spark</argument>
 						<argument>--class</argument>
