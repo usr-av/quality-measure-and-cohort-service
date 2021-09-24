@@ -128,6 +128,9 @@ public class SparkCqlEvaluator implements Serializable {
 
             final LongAccumulator contextAccum = spark.sparkContext().longAccumulator("Context");
             final LongAccumulator perContextAccum = spark.sparkContext().longAccumulator("PerContext");
+            CustomMetricSparkPlugin.contextAccumMetric.setAccumulator(contextAccum);
+            CustomMetricSparkPlugin.perContextAccumMetric.setAccumulator(perContextAccum);
+            
             DatasetRetriever datasetRetriever = new DefaultDatasetRetriever(spark, args.inputFormat);
             ContextRetriever contextRetriever = new ContextRetriever(args.inputPaths, datasetRetriever);
             for (ContextDefinition context : filteredContexts) {
