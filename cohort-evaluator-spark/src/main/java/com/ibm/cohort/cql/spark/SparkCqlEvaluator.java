@@ -130,6 +130,7 @@ public class SparkCqlEvaluator implements Serializable {
             final LongAccumulator perContextAccum = spark.sparkContext().longAccumulator("PerContext");
             CustomMetricSparkPlugin.contextAccumMetric.setAccumulator(contextAccum);
             CustomMetricSparkPlugin.perContextAccumMetric.setAccumulator(perContextAccum);
+            CustomMetricSparkPlugin.cohortMetricCounter.inc(filteredContexts.size());
             
             DatasetRetriever datasetRetriever = new DefaultDatasetRetriever(spark, args.inputFormat);
             ContextRetriever contextRetriever = new ContextRetriever(args.inputPaths, datasetRetriever);
@@ -148,7 +149,9 @@ public class SparkCqlEvaluator implements Serializable {
                 LOG.info(String.format("Wrote results for context %s to %s", contextName, outputPath));
 
                 contextAccum.add(1);
-                perContextAccum.reset();
+                //perContextAccum.reset();
+                //tabishop reset doesn't seem to return the value to zero
+                perContextAccum.setValue(0);
             }
         }
     }
