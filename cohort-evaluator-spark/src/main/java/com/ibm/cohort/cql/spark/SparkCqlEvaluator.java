@@ -156,6 +156,10 @@ public class SparkCqlEvaluator implements Serializable {
                 perContextAccum.setValue(0);
             }
             CustomMetricSparkPlugin.curentlyEvaluatingContext.setValue(-1);
+            //tabishop sleep for just over 2 minutes because Prometheus only polls
+            //every 2 minutes. If spark finishes and goes away immediately after completing,
+            //Prometheus will never be able to poll for the final set of metrics for the spark-submit
+            Thread.sleep(130000);
         }
     }
 
