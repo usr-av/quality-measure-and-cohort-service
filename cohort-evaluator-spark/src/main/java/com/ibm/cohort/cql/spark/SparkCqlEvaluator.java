@@ -131,17 +131,19 @@ public class SparkCqlEvaluator implements Serializable {
             CustomMetricSparkPlugin.contextAccumMetric.setAccumulator(contextAccum);
             CustomMetricSparkPlugin.perContextAccumMetric.setAccumulator(perContextAccum);
             CustomMetricSparkPlugin.cohortMetricCounter.inc(filteredContexts.size());
+            CustomMetricSparkPlugin.curentlyEvaluatingContext.setValue(0);
             
             DatasetRetriever datasetRetriever = new DefaultDatasetRetriever(spark, args.inputFormat);
             ContextRetriever contextRetriever = new ContextRetriever(args.inputPaths, datasetRetriever);
             for (ContextDefinition context : filteredContexts) {
                 final String contextName = context.getName();
                 LOG.info("Evaluating context " + contextName);
-
+                
                 final String outputPath = MapUtils.getRequiredKey(args.outputPaths, context.getName(), "outputPath");
 
                 JavaPairRDD<Object, List<Row>> rowsByContextId = contextRetriever.retrieveContext(context);
 
+                CustomMetricSparkPlugin.curentlyEvaluatingContext.setValue(CustomMetricSparkPlugin.curentlyEvaluatingContext.getValue() + 1);
                 JavaPairRDD<Object, Map<String, Object>> resultsByContext = rowsByContextId
                         .mapToPair(x -> evaluate(contextName, x, perContextAccum));
 
@@ -153,6 +155,7 @@ public class SparkCqlEvaluator implements Serializable {
                 //tabishop reset doesn't seem to return the value to zero
                 perContextAccum.setValue(0);
             }
+            CustomMetricSparkPlugin.curentlyEvaluatingContext.setValue(-1);
         }
     }
 
