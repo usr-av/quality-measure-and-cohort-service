@@ -155,7 +155,7 @@ public class SparkCqlEvaluator implements Serializable {
                 //tabishop reset doesn't seem to return the value to zero
                 perContextAccum.setValue(0);
             }
-            CustomMetricSparkPlugin.curentlyEvaluatingContext.setValue(-1);
+            CustomMetricSparkPlugin.curentlyEvaluatingContext.setValue(0);
             //tabishop sleep for just over 2 minutes because Prometheus only polls
             //every 2 minutes. If spark finishes and goes away immediately after completing,
             //Prometheus will never be able to poll for the final set of metrics for the spark-submit
