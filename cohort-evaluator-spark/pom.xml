@@ -19,66 +19,77 @@
 		<developerConnection>scm:git:git@github.com:Alvearie/quality-measure-and-cohort-service.git</developerConnection>
 	</scm>
 
-	<properties>
-		<!-- image.tag>us.icr.io/vpc-dev-cohort-rns/cohort-evaluator-spark:a-p3.4.3-tekton-20210831191041-5b74a7ab8f76f0e3c3f2273f49177128051e4e05</image.tag -->
-		<image.tag>us.icr.io/vpc-dev-cohort-rns/cohort-evaluator-spark:a-p3.4.3-tekton-20210910191400-4f2a530822f62bf0fa178a66ab73cba1dfab8e67</image.tag>
-		<config.volume>cohort-config</config.volume>
-		<data.bucket>kwasny-test</data.bucket>
-		<data.secret>spark-cos-secret</data.secret>
-		<job.name>simple-job</job.name>
-	</properties>
+    <properties>
+        <image.tag>us.icr.io/vpc-dev-cohort-rns/cohort-evaluator-spark:a-p3.4.3-tekton-20210907202747-a57c643820323a5c76ddb8392aa64c3eab27ba45</image.tag>
+        <config.volume>cohort-config</config.volume>
+        <data.bucket>kwasny-test</data.bucket>
+        <data.secret>spark-cos-secret</data.secret>
+        <job.name>simple-job</job.name>
+    </properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- We get jsp-api:2.1 transitively from our hadoop-common dependency. 
+				JSP 2.1 includes API classes for an early version of the javax.el unified 
+				expression language. That version conflicts with the newer version that is 
+				needed by recent Hibernate Validator implementations. Rather than backdate 
+				our Hibernate Validator all the way to 4.2.0.Final (which would be necessary 
+				to work with JSP 2.1), I am upgrading the JSP API to 2.2. -->
+			<dependency>
+				<groupId>javax.servlet.jsp</groupId>
+				<artifactId>jsp-api</artifactId>
+				<version>2.2</version>
+			</dependency>	
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.ibm.cohort</groupId>
 			<artifactId>cohort-evaluator</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<!-- Spark ships with Jersey and Jersey uses an ever-so-slightly newer 
+					version of the validation API, so we are preferring the Jersey version. -->
+				<exclusion>
+					<groupId>javax.validation</groupId>
+					<artifactId>validation-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>com.ibm.cohort</groupId>
 			<artifactId>cohort-model-datarow</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.opencds.cqf.cql</groupId>
 			<artifactId>engine</artifactId>
 		</dependency>
-	
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-		</dependency>
-	
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-		</dependency>
-	
-		<!-- This needs to be before Spark because spark pulls in JSP 2.1 and JSP 
-			2.1 has an embedded version of the javax.el API -->
-		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>javax.el</artifactId>
-		</dependency>
-	
+
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_${spark.scala.version}</artifactId>
 		</dependency>
-	
+		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-kubernetes_${spark.scala.version}</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>io.delta</groupId>
 			<artifactId>delta-core_${spark.scala.version}</artifactId>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
@@ -87,70 +98,78 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-	
+		
 		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-bundle</artifactId>
+			<groupId>xpp3</groupId>
+			<artifactId>xpp3</artifactId>
+			<version>1.1.4c</version>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-aws</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-	
+
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.validation</groupId>
+					<artifactId>validation-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.el</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
 		</dependency>
-	
+		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
-	
+
+		<dependency>
+			<groupId>info.cqframework</groupId>
+			<artifactId>model</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>info.cqframework</groupId>
+			<artifactId>elm</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>info.cqframework</groupId>
+			<artifactId>cql-to-elm</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-	
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<scope>test</scope>
-		</dependency>
 		
-		<!-- TABISHOP spark metrics, todo, move versions to parent pom -->
+		<!-- Required for custom spark metrics -->
 		<dependency>
-		    <groupId>io.dropwizard.metrics</groupId>
-		    <artifactId>metrics-core</artifactId>
-		    <version>4.1.1</version>
+			<groupId>io.dropwizard.metrics</groupId>
+			<artifactId>metrics-core</artifactId>
 		</dependency>
-		<!-- The client -->
-		<!-- <dependency>
-			<groupId>io.prometheus</groupId>
-			<artifactId>simpleclient</artifactId>
-			<version>0.12.0</version>
-		</dependency> -->
-		<!-- Hotspot JVM metrics 
-		<dependency>
-			<groupId>io.prometheus</groupId>
-			<artifactId>simpleclient_hotspot</artifactId>
-			<version>0.12.0</version>
-		</dependency> -->
-		<!-- Exposition HTTPServer 
-		<dependency>
-			<groupId>io.prometheus</groupId>
-			<artifactId>simpleclient_httpserver</artifactId>
-			<version>0.12.0</version>
-		</dependency> -->
-		<!-- Pushgateway exposition 
-		<dependency>
-			<groupId>io.prometheus</groupId>
-			<artifactId>simpleclient_pushgateway</artifactId>
-			<version>0.12.0</version>
-		</dependency>-->
+
 	</dependencies>
 
 	<build>
@@ -189,7 +208,7 @@
 						<argument>--conf</argument>
 						<argument>spark.master=k8s://https://c105.us-east.containers.cloud.ibm.com:32327</argument>
 						<argument>--conf</argument>
-						<argument>spark.eventLog.dir=s3a://${data.bucket}/z-spark-history</argument>
+                        <argument>spark.eventLog.dir=s3a://${data.bucket}/z-spark-history</argument>
 						<argument>--conf</argument>
 						<argument>spark.eventLog.enabled=true</argument>
 						<argument>--conf</argument>
@@ -199,7 +218,7 @@
 						<argument>--conf</argument>
 						<argument>spark.kubernetes.namespace=dev</argument>
 						<argument>--conf</argument>
-						<argument>spark.kubernetes.container.image=${image.tag}</argument>
+                        <argument>spark.kubernetes.container.image=${image.tag}</argument>
 						<argument>--conf</argument>
 						<argument>spark.kubernetes.authenticate.driver.serviceAccountName=spark</argument>
 						<argument>--conf</argument>
@@ -222,29 +241,7 @@
 						<argument>spark.kubernetes.executor.volumes.persistentVolumeClaim.${config.volume}.options.claimName=${config.volume}</argument>
 						<argument>--conf</argument>
 						<argument>spark.kubernetes.executor.volumes.persistentVolumeClaim.${config.volume}.mount.path=/${config.volume}</argument>
-						
-						<!-- Add properties for exposing embedded spark metrics endpoints for prometheus-->
-						<argument>--conf</argument>
-						<argument>spark.ui.prometheus.enabled=true</argument>
-						<argument>--conf</argument>
-						<argument>spark.executor.processTreeMetrics.enabled=true</argument>
-						
-						<argument>--conf</argument>
-						<argument>spark.kubernetes.driver.annotation.prometheus.io/scrape=true</argument>
-						<argument>--conf</argument>
-						<argument>spark.kubernetes.driver.annotation.prometheus.io/path=/metrics/executors/prometheus/</argument>
-						<argument>--conf</argument>
-						<argument>spark.kubernetes.driver.annotation.prometheus.io/port=4040</argument>
-						
-						<argument>--conf</argument>
-						<argument>spark.kubernetes.driver.service.annotation.prometheus.io/scrape=true</argument>
-						<argument>--conf</argument>
-						<argument>spark.kubernetes.driver.service.annotation.prometheus.io/path=/metrics/executors/prometheus/</argument>
-						<argument>--conf</argument>
-						<argument>spark.kubernetes.driver.service.annotation.prometheus.io/port=4040</argument>
-						
-						
-						<argument>deploy-mode</argument>
+						<argument>--deploy-mode</argument>
 						<argument>cluster</argument>
 						<argument>--name</argument>
 						<argument>cohort-evaluator-spark</argument>

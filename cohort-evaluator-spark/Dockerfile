@@ -33,6 +33,8 @@ RUN mv "${SPARK_VERSION}-${SPARK_DIST}" "${SPARK_HOME}"
 RUN mv "${SPARK_HOME}/kubernetes/dockerfiles/spark/entrypoint.sh" "${SPARK_HOME}"
 # Move decom.sh to SPARK_HOME
 RUN mv "${SPARK_HOME}/kubernetes/dockerfiles/spark/decom.sh" "${SPARK_HOME}"
+# Delete troublesome JSP-2.1 API JAR. It will be upgraded to JSP 2.2 when we copy our dependencies
+RUN rm "${SPARK_HOME}/jars/jsp-api-2.1.jar"
 # Remove the `tini` use from entrypoint.sh.  Tini is unavailable on Red Hat.
 RUN sed -i 's_/usr/bin/tini -s --__g' "${SPARK_HOME}/entrypoint.sh"
 
@@ -52,8 +54,8 @@ ENV SPARK_HOME=${SPARK_HOME}
 USER root
 # Perform a full update of all packages to minimize vulnerabilities
 RUN dnf update -y &&\
-    # Install Java 11
-    dnf install -y java-11-openjdk procps-ng &&\
+    # Install Java 11 with dev tools (jmap, jar, etc.) and procps-ng tooling (top, ps, free, etc.)
+    dnf install -y java-11-openjdk-devel procps-ng &&\
     # Clean dnf
     dnf clean all
     
