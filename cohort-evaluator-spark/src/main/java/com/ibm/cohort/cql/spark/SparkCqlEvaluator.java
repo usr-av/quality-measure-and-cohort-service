@@ -161,7 +161,7 @@ public class SparkCqlEvaluator implements Serializable {
             //every 5 seconds. If spark finishes and goes away immediately after completing,
             //Prometheus will never be able to poll for the final set of metrics for the spark-submit
             //The default promtheus config map was changed from 2 minute scrape interval to 5 seconds for spark pods
-            Thread.sleep(5000);
+            Thread.sleep(5500);
         }
     }
 
